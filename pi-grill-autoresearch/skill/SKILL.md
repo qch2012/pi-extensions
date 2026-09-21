@@ -31,7 +31,7 @@ Resolve every applicable branch:
 - campaign topic, generation, checked-out branch, and retention policy;
 - enforced limits: `maxIterations`, `timeout_seconds`, and `checks_timeout_seconds`;
 - advisory wall-clock and money ceilings;
-- absolute shared-input path and concurrency ceiling when campaigns share data or run in parallel.
+- absolute shared-input path, concurrency ceiling, and per-run CPU and memory budget when campaigns share data or run in parallel.
 
 Keep the frontier open until the measurement is agent-runnable and every hard gate has an objective command or observable result. If an evaluator does not exist, agree and create it before continuing. Autoresearch cannot enforce a hidden holdout or collect repeat samples: the user runs the holdout manually, and the measurement command owns repeated sampling.
 
@@ -71,7 +71,8 @@ After the `grilling` shared-understanding gate, show the complete contract using
 - May change:
 - Off limits:
 - Shared input data: <absolute path or not applicable>
-- Concurrency ceiling: <limit/resource budget or not applicable>
+- Concurrency ceiling: <parallel campaign limit or not applicable>
+- Per-run resource budget: <CPU/memory limit or not applicable>
 
 ## Budget
 - `maxIterations`:
