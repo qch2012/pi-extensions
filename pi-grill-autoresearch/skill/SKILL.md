@@ -1,18 +1,20 @@
 ---
 name: pi-grill-autoreasearch
-description: Define and approve a measurable new Autoresearch campaign before it starts.
+description: Define and approve a measurable new or resumed Autoresearch campaign before it starts.
 disable-model-invocation: true
 ---
 
 # Grill to Autoresearch
 
-Turn an optimization idea into one approved, agent-runnable contract, then start a new Autoresearch campaign from it.
+Turn an optimization idea into one approved, agent-runnable contract, then start or resume its Autoresearch campaign.
 
 ## Interview
 
 Load and follow the `grilling` skill. Its design tree, rounds, frontier, fact-finding, and shared-understanding gate govern the interview. Use the decision frontier below; do not replace `grilling` with a second interview process.
 
 Establish repository facts yourself. Read relevant files, inspect the current branch with `git branch --show-current`, and run candidate measurement commands when safe. Ask the user for decisions, not facts available from the environment.
+
+Set the campaign mode from the working directory: `.auto/prompt.md` absent means **new**; present means **resume**. For a resume, read the existing playbook and result ledger, keep that generation's original baseline, and grill only decisions that the persisted campaign does not already settle.
 
 Resolve every applicable branch:
 
@@ -41,7 +43,7 @@ After the `grilling` shared-understanding gate, show the complete contract using
 # Autoresearch Brief
 
 ## Campaign
-- Mode: new
+- Mode: <new or resume>
 - Topic:
 - Generation:
 - Campaign branch:
@@ -54,7 +56,7 @@ After the `grilling` shared-understanding gate, show the complete contract using
 ## Metrics
 - Primary: <name, unit, higher/lower is better>
 - Secondary:
-- Baseline/control:
+- Baseline/control: <original generation baseline when resuming>
 
 ## Measurement
 - Command:
@@ -85,7 +87,7 @@ After the `grilling` shared-understanding gate, show the complete contract using
 - The holdout is a manual out-of-band check, not a hidden or enforced in-loop gate.
 ```
 
-State plainly that no component creates or switches branches. Ask the user to approve this exact contract and start Autoresearch. Approval must be explicit.
+State plainly that no component creates or switches branches. For a resume, state that the original baseline, best result, playbook, and result ledger stay authoritative. Ask the user to approve this exact contract and start Autoresearch. Approval must be explicit.
 
 ## Start
 

@@ -1,5 +1,11 @@
+import { existsSync } from "node:fs";
 import { readFile, realpath } from "node:fs/promises";
-import { isAbsolute, relative, resolve, sep } from "node:path";
+import { isAbsolute, join, relative, resolve, sep } from "node:path";
+
+type SendUserMessage = (
+  message: string,
+  options: { deliverAs: "followUp"; expandPromptTemplates: true },
+) => void;
 
 function isOutside(root: string, path: string) {
   const fromRoot = relative(root, path);
@@ -33,17 +39,34 @@ export async function readProjectBrief(cwd: string, briefPath: string) {
   return { content, displayPath: relative(root, path) };
 }
 
-export function buildNewCampaignCommand(briefPath: string) {
-  return `/autoresearch Read ${briefPath} as the binding contract, create the .auto harness, establish the baseline, and start experiments immediately. You are already on the campaign branch. Do not create or switch branches at any point.`;
+export function buildAutoresearchCommand(briefPath: string, hasHarness: boolean) {
+  return hasHarness
+    ? `/autoresearch Read ${briefPath} as the binding contract. Continue the existing campaign. Do not call init_experiment. Do not reset the baseline. Do not overwrite .auto/prompt.md. Resume experiments immediately.`
+    : `/autoresearch Read ${briefPath} as the binding contract, create the .auto harness, establish the baseline, and start experiments immediately. You are already on the campaign branch. Do not create or switch branches at any point.`;
 }
 
-export function queueNewCampaign(
-  sendUserMessage: (message: string, options: { deliverAs: "followUp"; expandPromptTemplates: true }) => void,
+export function queueAutoresearch(
+  sendUserMessage: SendUserMessage,
   briefPath: string,
+  hasHarness: boolean,
 ) {
-  sendUserMessage(buildNewCampaignCommand(briefPath), {
+  sendUserMessage(buildAutoresearchCommand(briefPath, hasHarness), {
     deliverAs: "followUp",
     expandPromptTemplates: true,
   });
-  return `Queued new campaign from ${briefPath}.`;
+  return `Queued ${hasHarness ? "resume" : "new"} campaign from ${briefPath}.`;
+}
+
+export async function handoffAutoresearch(
+  cwd: string,
+  briefPath: string,
+  sendUserMessage: SendUserMessage,
+) {
+  const brief = await readProjectBrief(cwd, briefPath);
+  const mode = existsSync(join(cwd, ".auto", "prompt.md")) ? "resume" : "new";
+  return {
+    briefPath: brief.displayPath,
+    message: queueAutoresearch(sendUserMessage, brief.displayPath, mode === "resume"),
+    mode,
+  };
 }
